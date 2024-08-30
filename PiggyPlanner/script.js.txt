@@ -1,0 +1,54 @@
+let dailyBudget = 0;
+   let remainingBudget = 0;
+   let daysLeft = 0;
+
+   document.getElementById('calculate').addEventListener('click', () => {
+     const monthlyIncome = parseFloat(document.getElementById('monthly-income').value);
+     const savingsGoal = parseFloat(document.getElementById('savings-goal').value);
+     const savingsPeriod = parseFloat(document.getElementById('savings-period').value);
+
+     const totalDays = savingsPeriod * 30;
+     dailyBudget = (monthlyIncome * savingsPeriod - savingsGoal) / totalDays;
+     remainingBudget = dailyBudget;
+     daysLeft = totalDays;
+
+     updateUI();
+     document.getElementById('input-section').style.display = 'none';
+     document.getElementById('result-section').style.display = 'block';
+   });
+
+   document.getElementById('add-expense').addEventListener('click', () => {
+     const expense = parseFloat(document.getElementById('expense').value);
+     remainingBudget -= expense;
+     updateUI();
+   });
+
+   document.getElementById('next-day').addEventListener('click', () => {
+     daysLeft--;
+     remainingBudget += dailyBudget;
+     updateUI();
+   });
+
+   document.getElementById('recalculate').addEventListener('click', () => {
+     dailyBudget = remainingBudget / daysLeft;
+     updateUI();
+   });
+
+   function updateUI() {
+     document.getElementById('daily-budget').textContent = dailyBudget.toFixed(2);
+     document.getElementById('remaining-budget').textContent = remainingBudget.toFixed(2);
+     document.getElementById('days-left').textContent = daysLeft;
+   }
+
+   // Registrazione del Service Worker
+   if ('serviceWorker' in navigator) {
+     window.addEventListener('load', () => {
+       navigator.serviceWorker.register('/service-worker.js')
+         .then(registration => {
+           console.log('Service Worker registrato con successo:', registration.scope);
+         })
+         .catch(error => {
+           console.log('Registrazione del Service Worker fallita:', error);
+         });
+     });
+   }
